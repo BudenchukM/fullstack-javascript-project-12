@@ -3,16 +3,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 import socket from './socket';
+import ChannelsList from './components/Channels/ChannelsList';
+
 import { setChannels } from './store/slices/channelsSlice';
 import { setMessages, addMessage } from './store/slices/messagesSlice';
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const channels = useSelector((state) => state.channels);
+  // 🔹 Redux state
+  const activeChannelId = useSelector(
+    (state) => state.channels.activeChannelId
+  );
   const messages = useSelector((state) => state.messages);
 
-  // 🔹 Инициализация: получаем каналы и сообщения
+  // 🔹 Сообщения только активного канала
+  const filteredMessages = messages.filter(
+    (m) => m.channelId === activeChannelId
+  );
+
+  // 🔹 Инициализация: загрузка каналов и сообщений
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -61,7 +71,7 @@ const App = () => {
         '/api/v1/messages',
         {
           body,
-          channelId: 1, // General
+          channelId: activeChannelId, // ✅ в активный канал
         },
         {
           headers: {
@@ -69,7 +79,7 @@ const App = () => {
           },
         }
       );
-      // ❗ сообщение НЕ добавляем вручную
+      // ❗ сообщение не добавляем вручную
       // оно придёт через WebSocket
     } catch (err) {
       console.error('Ошибка отправки сообщения', err);
@@ -84,27 +94,20 @@ const App = () => {
         {/* Каналы */}
         <div className="col-4">
           <h4>Каналы</h4>
-          <ul className="list-group">
-            {channels.map((channel) => (
-              <li key={channel.id} className="list-group-item">
-                {channel.name}
-              </li>
-            ))}
-          </ul>
+          <ChannelsList />
         </div>
 
         {/* Сообщения */}
-        <div className="col-8">
+        <div className="col-8 d-flex flex-column">
           <h4>Сообщения</h4>
 
-          <ul className="list-group mb-3">
-            {messages
-              .filter((m) => m.channelId === 1) // General
-              .map((message) => (
-                <li key={message.id} className="list-group-item">
-                  <strong>{message.username}:</strong> {message.body}
-                </li>
-              ))}
+          <ul className="list-group mb-3 flex-grow-1 overflow-auto">
+            {filteredMessages.map((message) => (
+              <li key={message.id} className="list-group-item">
+                <strong>{message.username}:</strong>{' '}
+                {message.body}
+              </li>
+            ))}
           </ul>
 
           {/* Форма отправки */}
@@ -116,7 +119,10 @@ const App = () => {
                 placeholder="Введите сообщение..."
                 required
               />
-              <button className="btn btn-primary" type="submit">
+              <button
+                className="btn btn-primary"
+                type="submit"
+              >
                 Отправить
               </button>
             </div>
