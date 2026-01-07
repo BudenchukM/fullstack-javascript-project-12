@@ -7,15 +7,20 @@ import './index.css';
 
 import App from './App.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
 
-import store from './store'; // ✅ подключаем store
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Header from './components/Header.jsx';
+
+import store from './store';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
+        <Header />
+
         <Routes>
           {/* Главная (чат) — защищена */}
           <Route
@@ -29,6 +34,9 @@ createRoot(document.getElementById('root')).render(
 
           {/* Страница входа */}
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Регистрация */}
+          <Route path="/signup" element={<SignupPage />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFoundPage />} />
