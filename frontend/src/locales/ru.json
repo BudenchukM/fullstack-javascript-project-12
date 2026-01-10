@@ -1,0 +1,81 @@
+{
+  "app": {
+    "title": "Чат"
+  },
+
+  "header": {
+    "brand": "Hexlet Chat",
+    "logout": "Выйти"
+  },
+
+  "login": {
+    "title": "Вход",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "submit": "Войти",
+    "noAccount": "Нет аккаунта?",
+    "signup": "Регистрация",
+    "error": "Неверные имя пользователя или пароль"
+  },
+
+  "signup": {
+    "title": "Регистрация",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "submit": "Зарегистрироваться",
+    "errors": {
+      "required": "Обязательное поле",
+      "usernameLength": "От 3 до 20 символов",
+      "passwordLength": "Не менее 6 символов",
+      "passwordsMustMatch": "Пароли должны совпадать",
+      "userExists": "Пользователь уже существует",
+      "unknown": "Ошибка регистрации"
+    }
+  },
+
+  "chat": {
+    "title": "Чат",
+    "channels": "Каналы",
+    "messages": "Сообщения",
+    "messagePlaceholder": "Введите сообщение...",
+    "send": "Отправить"
+  },
+
+"channels": {
+  "add": "Добавить канал",
+  "remove": "Удалить",
+  "rename": "Переименовать",
+  "confirmRemove": "Вы уверены?",
+  "general": "general",
+
+  "name": "Имя канала",
+  "errors": {
+    "unique": "Имя должно быть уникальным"
+  }
+},
+
+  "modals": {
+    "addChannel": {
+      "title": "Добавить канал",
+      "submit": "Добавить",
+      "cancel": "Отменить"
+    },
+    "renameChannel": {
+      "title": "Переименовать канал",
+      "submit": "Переименовать",
+      "cancel": "Отменить"
+    },
+    "removeChannel": {
+      "title": "Удалить канал",
+      "submit": "Удалить",
+      "cancel": "Отменить"
+    }
+  },
+
+  "notFound": {
+    "title": "404 – Страница не найдена",
+    "back": "Вернуться на",
+    "main": "главную"
+  }
+}

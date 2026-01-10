@@ -3,30 +3,35 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const [signupError, setSignupError] = useState(null);
+  const { t } = useTranslation(); // ✅ i18n
 
   const validationSchema = yup.object({
     username: yup
       .string()
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .required('Обязательное поле'),
+      .min(3, t('signup.validation.usernameLength'))
+      .max(20, t('signup.validation.usernameLength'))
+      .required(t('signup.validation.required')),
     password: yup
       .string()
-      .min(6, 'Не менее 6 символов')
-      .required('Обязательное поле'),
+      .min(6, t('signup.validation.passwordLength'))
+      .required(t('signup.validation.required')),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref('password')], 'Пароли должны совпадать')
-      .required('Обязательное поле'),
+      .oneOf(
+        [yup.ref('password')],
+        t('signup.validation.passwordsMatch')
+      )
+      .required(t('signup.validation.required')),
   });
 
   return (
     <div className="container mt-5" style={{ maxWidth: 400 }}>
-      <h2>Регистрация</h2>
+      <h2>{t('signup.title')}</h2>
 
       <Formik
         initialValues={{
@@ -37,6 +42,7 @@ const SignupPage = () => {
         validationSchema={validationSchema}
         onSubmit={async (values, { setSubmitting }) => {
           setSignupError(null);
+
           try {
             const response = await axios.post('/api/v1/signup', {
               username: values.username,
@@ -47,9 +53,9 @@ const SignupPage = () => {
             navigate('/');
           } catch (err) {
             if (err.response?.status === 409) {
-              setSignupError('Пользователь уже существует');
+              setSignupError(t('signup.errors.exists'));
             } else {
-              setSignupError('Ошибка регистрации');
+              setSignupError(t('signup.errors.common'));
             }
           } finally {
             setSubmitting(false);
@@ -59,8 +65,11 @@ const SignupPage = () => {
         {({ isSubmitting }) => (
           <Form className="d-flex flex-column gap-3">
             <div>
-              <label>Имя пользователя</label>
-              <Field name="username" className="form-control" />
+              <label>{t('signup.username')}</label>
+              <Field
+                name="username"
+                className="form-control"
+              />
               <ErrorMessage
                 name="username"
                 component="div"
@@ -69,7 +78,7 @@ const SignupPage = () => {
             </div>
 
             <div>
-              <label>Пароль</label>
+              <label>{t('signup.password')}</label>
               <Field
                 name="password"
                 type="password"
@@ -83,7 +92,7 @@ const SignupPage = () => {
             </div>
 
             <div>
-              <label>Подтвердите пароль</label>
+              <label>{t('signup.confirmPassword')}</label>
               <Field
                 name="confirmPassword"
                 type="password"
@@ -97,7 +106,9 @@ const SignupPage = () => {
             </div>
 
             {signupError && (
-              <div className="text-danger">{signupError}</div>
+              <div className="text-danger">
+                {signupError}
+              </div>
             )}
 
             <button
@@ -105,7 +116,7 @@ const SignupPage = () => {
               className="btn btn-primary"
               disabled={isSubmitting}
             >
-              Зарегистрироваться
+              {t('signup.submit')}
             </button>
           </Form>
         )}

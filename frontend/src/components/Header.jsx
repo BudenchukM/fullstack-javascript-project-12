@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(); // ✅ i18n
   const isAuth = Boolean(localStorage.getItem('token'));
 
   const handleLogout = () => {
@@ -12,7 +14,7 @@ const Header = () => {
   return (
     <nav className="navbar navbar-light bg-light px-3">
       <Link className="navbar-brand" to="/">
-        Hexlet Chat
+        {t('header.title')}
       </Link>
 
       {isAuth && (
@@ -20,7 +22,7 @@ const Header = () => {
           className="btn btn-outline-secondary"
           onClick={handleLogout}
         >
-          Выйти
+          {t('header.logout')}
         </button>
       )}
     </nav>

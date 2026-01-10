@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 import socket from './socket';
 import ChannelsList from './components/Channels/ChannelsList';
@@ -10,6 +11,7 @@ import { setMessages, addMessage } from './store/slices/messagesSlice';
 
 const App = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation(); // ✅ i18n
 
   // 🔹 Redux state
   const activeChannelId = useSelector(
@@ -37,12 +39,12 @@ const App = () => {
         dispatch(setChannels(response.data.channels));
         dispatch(setMessages(response.data.messages));
       } catch (err) {
-        console.error('Ошибка загрузки данных', err);
+        console.error(t('errors.loadData'), err);
       }
     };
 
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   // 🔹 Подписка на новые сообщения (WebSocket)
   useEffect(() => {
@@ -71,7 +73,7 @@ const App = () => {
         '/api/v1/messages',
         {
           body,
-          channelId: activeChannelId, // ✅ в активный канал
+          channelId: activeChannelId,
         },
         {
           headers: {
@@ -79,27 +81,25 @@ const App = () => {
           },
         }
       );
-      // ❗ сообщение не добавляем вручную
-      // оно придёт через WebSocket
     } catch (err) {
-      console.error('Ошибка отправки сообщения', err);
+      console.error(t('errors.sendMessage'), err);
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>Чат</h2>
+      <h2>{t('chat.title')}</h2>
 
       <div className="row">
         {/* Каналы */}
         <div className="col-4">
-          <h4>Каналы</h4>
+          <h4>{t('chat.channels')}</h4>
           <ChannelsList />
         </div>
 
         {/* Сообщения */}
         <div className="col-8 d-flex flex-column">
-          <h4>Сообщения</h4>
+          <h4>{t('chat.messages')}</h4>
 
           <ul className="list-group mb-3 flex-grow-1 overflow-auto">
             {filteredMessages.map((message) => (
@@ -116,14 +116,14 @@ const App = () => {
               <input
                 name="message"
                 className="form-control"
-                placeholder="Введите сообщение..."
+                placeholder={t('chat.inputPlaceholder')}
                 required
               />
               <button
                 className="btn btn-primary"
                 type="submit"
               >
-                Отправить
+                {t('chat.send')}
               </button>
             </div>
           </form>

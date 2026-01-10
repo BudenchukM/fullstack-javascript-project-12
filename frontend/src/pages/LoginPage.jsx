@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const LoginPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { t } = useTranslation(); // ✅ i18n
 
   return (
     <div className="container mt-5">
-      <h2>Вход</h2>
+      <h2>{t('login.title')}</h2>
 
       <Formik
         initialValues={{ username: '', password: '' }}
@@ -19,7 +21,7 @@ const LoginPage = () => {
             localStorage.setItem('token', response.data.token);
             navigate('/');
           } catch (err) {
-            setError('Неверные имя пользователя или пароль');
+            setError(t('login.errors.invalid'));
           }
         }}
       >
@@ -30,37 +32,50 @@ const LoginPage = () => {
               style={{ maxWidth: '300px' }}
             >
               <div>
-                <label htmlFor="username">Имя пользователя</label>
+                <label htmlFor="username">
+                  {t('login.username')}
+                </label>
                 <Field
                   id="username"
                   name="username"
                   className="form-control"
-                  placeholder="Введите имя"
+                  placeholder={t('login.usernamePlaceholder')}
                 />
               </div>
 
               <div>
-                <label htmlFor="password">Пароль</label>
+                <label htmlFor="password">
+                  {t('login.password')}
+                </label>
                 <Field
                   id="password"
                   name="password"
                   type="password"
                   className="form-control"
-                  placeholder="Введите пароль"
+                  placeholder={t('login.passwordPlaceholder')}
                 />
               </div>
 
-              {error && <div className="text-danger">{error}</div>}
+              {error && (
+                <div className="text-danger">
+                  {error}
+                </div>
+              )}
 
-              <button type="submit" className="btn btn-primary">
-                Войти
+              <button
+                type="submit"
+                className="btn btn-primary"
+              >
+                {t('login.submit')}
               </button>
             </Form>
 
             {/* 🔹 Ссылка на регистрацию */}
             <p className="mt-3">
-              Нет аккаунта?{' '}
-              <Link to="/signup">Регистрация</Link>
+              {t('login.noAccount')}{' '}
+              <Link to="/signup">
+                {t('login.signup')}
+              </Link>
             </p>
           </>
         )}
