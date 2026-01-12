@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import socket from './socket';
 import ChannelsList from './components/Channels/ChannelsList';
@@ -11,17 +12,17 @@ import { setMessages, addMessage } from './store/slices/messagesSlice';
 
 const App = () => {
   const dispatch = useDispatch();
-  const { t } = useTranslation(); // ✅ i18n
+  const { t } = useTranslation();
 
   // 🔹 Redux state
   const activeChannelId = useSelector(
-    (state) => state.channels.activeChannelId
+    (state) => state.channels.activeChannelId,
   );
   const messages = useSelector((state) => state.messages);
 
   // 🔹 Сообщения только активного канала
   const filteredMessages = messages.filter(
-    (m) => m.channelId === activeChannelId
+    (m) => m.channelId === activeChannelId,
   );
 
   // 🔹 Инициализация: загрузка каналов и сообщений
@@ -39,14 +40,20 @@ const App = () => {
         dispatch(setChannels(response.data.channels));
         dispatch(setMessages(response.data.messages));
       } catch (err) {
-        console.error(t('errors.loadData'), err);
+        console.error(err);
+
+        if (!err.response) {
+          toast.error(t('toasts.networkError'));
+        } else {
+          toast.error(t('toasts.loadError'));
+        }
       }
     };
 
     fetchData();
   }, [dispatch, t]);
 
-  // 🔹 Подписка на новые сообщения (WebSocket)
+  // 🔹 WebSocket: новые сообщения
   useEffect(() => {
     socket.on('newMessage', (message) => {
       dispatch(addMessage(message));
@@ -79,10 +86,11 @@ const App = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (err) {
-      console.error(t('errors.sendMessage'), err);
+      console.error(err);
+      toast.error(t('toasts.sendMessageError'));
     }
   };
 
@@ -116,13 +124,10 @@ const App = () => {
               <input
                 name="message"
                 className="form-control"
-                placeholder={t('chat.inputPlaceholder')}
+                placeholder={t('chat.messagePlaceholder')}
                 required
               />
-              <button
-                className="btn btn-primary"
-                type="submit"
-              >
+              <button className="btn btn-primary" type="submit">
                 {t('chat.send')}
               </button>
             </div>

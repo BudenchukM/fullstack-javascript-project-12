@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import { addChannel } from '../../store/slices/channelsSlice';
 
@@ -23,7 +24,7 @@ const AddChannelModal = ({ show, onHide }) => {
   });
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modals.addChannel.title')}</Modal.Title>
       </Modal.Header>
@@ -34,6 +35,7 @@ const AddChannelModal = ({ show, onHide }) => {
         onSubmit={async (values, { setSubmitting }) => {
           try {
             const token = localStorage.getItem('token');
+
             const response = await axios.post(
               '/api/v1/channels',
               values,
@@ -41,11 +43,20 @@ const AddChannelModal = ({ show, onHide }) => {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
-              }
+              },
             );
 
             dispatch(addChannel(response.data));
+            toast.success(t('toasts.channelAdded')); // ✅ toast
             onHide();
+          } catch (err) {
+            console.error(err);
+
+            if (!err.response) {
+              toast.error(t('toasts.networkError'));
+            } else {
+              toast.error(t('toasts.loadError'));
+            }
           } finally {
             setSubmitting(false);
           }
@@ -80,10 +91,7 @@ const AddChannelModal = ({ show, onHide }) => {
               <Button variant="secondary" onClick={onHide}>
                 {t('modals.addChannel.cancel')}
               </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" disabled={isSubmitting}>
                 {t('modals.addChannel.submit')}
               </Button>
             </Modal.Footer>

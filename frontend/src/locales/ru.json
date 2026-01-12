@@ -67,9 +67,9 @@
       "cancel": "Отменить"
     },
     "removeChannel": {
-      "title": "Удалить канал",
+       "confirm": "Удалить канал",
       "submit": "Удалить",
-      "cancel": "Отменить"
+      "cancel": "Отмена"
     }
   },
 
@@ -77,5 +77,18 @@
     "title": "404 – Страница не найдена",
     "back": "Вернуться на",
     "main": "главную"
-  }
+  },
+
+  "toasts": {
+  "networkError": "Ошибка соединения",
+  "loadError": "Ошибка загрузки данных",
+  "channelRemoveError": "Ошибка при удалении канала",
+  "sendMessageError": "Не удалось отправить сообщение",
+  "channelAdded": "Канал создан",
+  "channelRemoved": "Канал удалён",
+  "channelRenamed": "Канал переименован",
+   "channelRenameError": "Ошибка при переименовании канала"
 }
+
+}
+
