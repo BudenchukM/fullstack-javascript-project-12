@@ -5,12 +5,13 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import filter from 'leo-profanity';
 
 import { addChannel } from '../../store/slices/channelsSlice';
 
 const AddChannelModal = ({ show, onHide }) => {
   const dispatch = useDispatch();
-  const channels = useSelector((s) => s.channels.channels);
+  const channels = useSelector((state) => state.channels.channels);
   const { t } = useTranslation();
 
   const channelNames = channels.map((c) => c.name);
@@ -36,9 +37,11 @@ const AddChannelModal = ({ show, onHide }) => {
           try {
             const token = localStorage.getItem('token');
 
+            const cleanedName = filter.clean(values.name);
+
             const response = await axios.post(
               '/api/v1/channels',
-              values,
+              { name: cleanedName },
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -47,16 +50,10 @@ const AddChannelModal = ({ show, onHide }) => {
             );
 
             dispatch(addChannel(response.data));
-            toast.success(t('toasts.channelAdded')); // ✅ toast
+            toast.success(t('toasts.channelAdded'));
             onHide();
           } catch (err) {
-            console.error(err);
-
-            if (!err.response) {
-              toast.error(t('toasts.networkError'));
-            } else {
-              toast.error(t('toasts.loadError'));
-            }
+            toast.error(t('toasts.networkError'));
           } finally {
             setSubmitting(false);
           }

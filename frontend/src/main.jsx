@@ -1,5 +1,11 @@
 import './i18n';
 
+import filter from 'leo-profanity';
+
+// 🔹 инициализация фильтра (один раз)
+filter.add(filter.getDictionary('ru'));
+filter.add(filter.getDictionary('en'));
+
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';

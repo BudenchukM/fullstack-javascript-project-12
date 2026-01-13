@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import filter from 'leo-profanity';
 
 import socket from './socket';
 import ChannelsList from './components/Channels/ChannelsList';
@@ -25,7 +26,7 @@ const App = () => {
     (m) => m.channelId === activeChannelId,
   );
 
-  // 🔹 Инициализация: загрузка каналов и сообщений
+  // 🔹 Загрузка данных
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -40,8 +41,6 @@ const App = () => {
         dispatch(setChannels(response.data.channels));
         dispatch(setMessages(response.data.messages));
       } catch (err) {
-        console.error(err);
-
         if (!err.response) {
           toast.error(t('toasts.networkError'));
         } else {
@@ -64,13 +63,14 @@ const App = () => {
     };
   }, [dispatch]);
 
-  // 🔹 Отправка сообщения
+  // 🔹 Отправка сообщения + фильтрация
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const body = e.target.message.value.trim();
-    if (!body) return;
+    const rawBody = e.target.message.value.trim();
+    if (!rawBody) return;
 
+    const body = filter.clean(rawBody);
     e.target.reset();
 
     const token = localStorage.getItem('token');
@@ -89,8 +89,7 @@ const App = () => {
         },
       );
     } catch (err) {
-      console.error(err);
-      toast.error(t('toasts.sendMessageError'));
+      toast.error(t('toasts.networkError'));
     }
   };
 
