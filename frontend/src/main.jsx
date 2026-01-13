@@ -10,6 +10,9 @@ import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { RollbarProvider, ErrorBoundary } from '@rollbar/react';
+
+import rollbar from './rollbar';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,32 +31,36 @@ import store from './store';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Header />
-        <ToastContainer />
+    <RollbarProvider instance={rollbar}>
+      <ErrorBoundary>
+        <Provider store={store}>
+          <BrowserRouter>
+            <Header />
+            <ToastContainer />
 
-        <Routes>
-          {/* Главная (чат) — защищена */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <App />
-              </ProtectedRoute>
-            }
-          />
+            <Routes>
+              {/* Главная (чат) — защищена */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <App />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Страница входа */}
-          <Route path="/login" element={<LoginPage />} />
+              {/* Страница входа */}
+              <Route path="/login" element={<LoginPage />} />
 
-          {/* Регистрация */}
-          <Route path="/signup" element={<SignupPage />} />
+              {/* Регистрация */}
+              <Route path="/signup" element={<SignupPage />} />
 
-          {/* 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+              {/* 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </BrowserRouter>
+        </Provider>
+      </ErrorBoundary>
+    </RollbarProvider>
   </StrictMode>,
 );
