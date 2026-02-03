@@ -9,15 +9,15 @@ install:
 	npm ci
 	cd frontend && npm ci
 
-# Сборка фронтенда
+# Сборка фронтенда (устанавливаем зависимости перед сборкой)
 build:
-	cd frontend && npm run build
+	cd frontend && npm ci && npm run build
 
 # Запуск Hexlet Chat Server с фронтендом
 start:
 	npx start-server -s ./frontend/dist
 
-# Запуск dev-сервера фронтенда (React) с проксированием
+# Запуск dev-сервера фронтенда (React) с проксированием API
 dev:
 	cd frontend && npm run dev
 
