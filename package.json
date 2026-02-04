@@ -23,6 +23,8 @@
     "eslint-plugin-functional": "^6.5.1"
   },
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.4"
+    "@hexlet/chat-server": "^2.0.4",
+    "@rollbar/react": "^1.0.0",
+    "rollbar": "^2.26.5"
   }
 }

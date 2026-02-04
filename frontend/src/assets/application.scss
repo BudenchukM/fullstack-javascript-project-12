@@ -1,0 +1,9 @@
+@import 'bootstrap/scss/bootstrap';
+
+.channel-button:hover {
+  @extend .bg-info-subtle
+}
+
+.channel-button:focus {
+  @extend .bg-info-subtle
+}
