@@ -6,28 +6,22 @@ import resources from './locales/index.js'
 import { initSocket } from './network/socket.js'
 import store from './slices/index.js'
 
-const init = async () => {
-  const i18n = i18next.createInstance()
-  const mode = import.meta.env.MODE || 'development'
+const i18n = i18next.createInstance()
 
-  await i18n
-    .use(initReactI18next)
-    .init({
-      resources,
-      debug: mode === 'development',
-      fallbackLng: 'ru',
-      interpolation: {
-        escapeValue: false,
-      },
-    })
+export const initPromise = i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    debug: import.meta.env.MODE === 'development',
+    fallbackLng: 'ru',
+    interpolation: { escapeValue: false },
+  })
+  .then(() => {
+    leo.clearList()
+    leo.add(leo.getDictionary('en'))
+    leo.add(leo.getDictionary('ru'))
 
-  leo.clearList()
-  leo.add(leo.getDictionary('en'))
-  leo.add(leo.getDictionary('ru'))
+    initSocket(store.dispatch)
+  })
 
-  initSocket(store.dispatch)
-
-  return { i18n }
-}
-
-export default init
+export default i18n
