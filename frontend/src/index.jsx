@@ -1,40 +1,94 @@
-import ReactDOM from 'react-dom/client'
 import { ErrorBoundary, Provider as RollBarProvider } from '@rollbar/react'
-import Rollbar from 'rollbar'
-import { I18nextProvider } from 'react-i18next'
+import ReactDOM from 'react-dom/client'
 import i18next from 'i18next'
+import { I18nextProvider, initReactI18next } from 'react-i18next'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import leo from 'leo-profanity'
 
-import App from './App.jsx'
+import './assets/application.scss'
+import 'react-toastify/dist/ReactToastify.css'
 import resources from './locales/index.js'
 import { initSocket } from './network/socket.js'
-import store from './slices/index.js'
-
-// инициализация i18n
-const i18n = i18next.createInstance()
-await i18n.use(initReactI18next).init({
-  resources,
-  fallbackLng: 'ru',
-  interpolation: { escapeValue: false },
-})
-
-// инициализация сокетов
-initSocket(store.dispatch)
-
-// Rollbar instance
-const rollbar = new Rollbar({
-  accessToken: import.meta.env.VITE_ROLLBAR_TOKEN,
-  environment: import.meta.env.MODE,
-  captureUncaught: true,
-  captureUnhandledRejections: true,
-})
+import { pages } from './utils/routes.js'
+import MainHeader from './components/MainHeader.jsx'
+import store from './slices/index'
+import NotFound from './pages/NotFound.jsx'
+import SignUp from './pages/SignUp.jsx'
+import Login from './pages/Login.jsx'
+import Main from './pages/Main.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
+import ModalManager from './components/ModalManager.jsx'
+import ToastListener from './components/ToastListener.jsx'
+import { ToastContainer } from 'react-toastify'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(
-  <RollBarProvider instance={rollbar}>
-    <ErrorBoundary>
-      <I18nextProvider i18n={i18n}>
-        <App />
-      </I18nextProvider>
-    </ErrorBoundary>
-  </RollBarProvider>
+
+const App = () => (
+  <Provider store={store}>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <div className="d-flex flex-column h-100">
+        <MainHeader />
+        <Routes>
+          <Route path={pages.signup()} element={<SignUp />} />
+          <Route path={pages.login()} element={<Login />} />
+          <Route
+            path={pages.root()}
+            element={(
+              <PrivateRoute>
+                <Main />
+              </PrivateRoute>
+            )}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <ModalManager />
+        <ToastContainer pauseOnFocusLoss={false} />
+        <ToastListener />
+      </div>
+    </BrowserRouter>
+  </Provider>
 )
+
+const init = async () => {
+  const i18n = i18next.createInstance()
+
+  const mode = import.meta.env.MODE || 'development'
+  const isDevelop = mode === 'development'
+
+  await i18n
+    .use(initReactI18next)
+    .init({
+      resources,
+      debug: isDevelop,
+      fallbackLng: 'ru',
+      interpolation: {
+        escapeValue: false,
+      },
+    })
+
+  leo.clearList()
+  leo.add(leo.getDictionary('en'))
+  leo.add(leo.getDictionary('ru'))
+
+  initSocket(store.dispatch)
+
+  const rollbarConfig = {
+    accessToken: import.meta.env.VITE_ROLLBAR_TOKEN,
+    environment: import.meta.env.PROD ? 'production' : 'development',
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  }
+
+  root.render(
+    <RollBarProvider config={rollbarConfig}>
+      <ErrorBoundary>
+        <I18nextProvider i18n={i18n}>
+          <App />
+        </I18nextProvider>
+      </ErrorBoundary>
+    </RollBarProvider>,
+  )
+}
+
+init()
