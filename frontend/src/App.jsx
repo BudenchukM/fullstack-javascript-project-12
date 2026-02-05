@@ -6,9 +6,9 @@ import store from './slices/index.js'
 import { pages } from './utils/routes.js'
 
 import MainHeader from './components/MainHeader.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
 import ModalManager from './components/ModalManager.jsx'
 import ToastListener from './components/ToastListener.jsx'
-import PrivateRoute from './components/PrivateRoute.jsx'
 
 import NotFound from './pages/NotFound.jsx'
 import SignUp from './pages/SignUp.jsx'
