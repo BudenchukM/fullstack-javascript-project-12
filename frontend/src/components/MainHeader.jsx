@@ -1,15 +1,12 @@
 import Button from 'react-bootstrap/Button'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
 import { pages as pagesRoutes } from '../utils/routes.js'
-import { selectAuth } from '../slices/auth.js'
 import useAuth from '../hooks/useAuth.js'
 
 const MainHeader = () => {
   const { t } = useTranslation('Components', { keyPrefix: 'MainHeader' })
-  const authInfo = useSelector(selectAuth)
-  const { handleLogout } = useAuth()
+  const { isAuth, handleLogout } = useAuth()
 
   return (
     <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -21,7 +18,8 @@ const MainHeader = () => {
         >
           {t('brandName')}
         </Link>
-        {authInfo.token && (
+
+        {isAuth && (
           <Button
             variant="primary"
             type="button"
