@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next'
 import loginAvatarImage from '../assets/avatar.jpg'
 import { loginSchema } from '../validation/schema'
 import { pages as pagesRoutes } from '../utils/routes'
-import { useAuth } from '../hooks/useAuth'
+import useAuth from '../hooks/useAuth'
 
 const Login = () => {
   const { t } = useTranslation('Components', { keyPrefix: 'Login' })
-  const auth = useAuth()
+  const { handleLogin } = useAuth()
 
   return (
     <Container fluid className="h-100">
@@ -24,10 +24,9 @@ const Login = () => {
                 initialValues={{ username: '', password: '' }}
                 validateOnBlur
                 validationSchema={loginSchema}
-                onSubmit={(values, actions) => auth.login(values, actions)}
+                onSubmit={handleLogin}
               >
-                {
-                 props => (
+                {props => (
                   <Form noValidate onSubmit={props.handleSubmit} className="w-50">
                     <Card.Title as="h1" className="text-center">
                       {t('Form.title')}
