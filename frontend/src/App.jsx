@@ -8,6 +8,7 @@ import { pages } from './utils/routes.js'
 import MainHeader from './components/MainHeader.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 import ModalManager from './components/ModalManager.jsx'
+import ToastListener from './components/ToastListener.jsx'
 
 import NotFound from './pages/NotFound.jsx'
 import SignUp from './pages/SignUp.jsx'
@@ -36,7 +37,7 @@ const App = () => (
 
         <ModalManager />
         <ToastContainer pauseOnFocusLoss={false} />
-        {/* ToastListener больше не нужен */}
+        <ToastListener />
       </div>
     </BrowserRouter>
   </Provider>
