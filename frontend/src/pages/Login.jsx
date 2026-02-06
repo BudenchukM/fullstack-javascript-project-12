@@ -26,7 +26,8 @@ const Login = () => {
                 validationSchema={loginSchema}
                 onSubmit={(values, actions) => auth.login(values, actions)}
               >
-                {(props) => (
+                {
+                 props => (
                   <Form noValidate onSubmit={props.handleSubmit} className="w-50">
                     <Card.Title as="h1" className="text-center">
                       {t('Form.title')}
