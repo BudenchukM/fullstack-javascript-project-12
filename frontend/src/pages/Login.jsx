@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import loginAvatarImage from '../assets/avatar.jpg'
 import { loginSchema } from '../validation/schema'
 import { pages as pagesRoutes } from '../utils/routes'
-import useAuth from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
 const Login = () => {
   const { t } = useTranslation('Components', { keyPrefix: 'Login' })
