@@ -26,7 +26,7 @@ const Login = () => {
                 validateOnBlur
                 onSubmit={login}
               >
-                {(props) => (
+                {props => (
                   <Form noValidate onSubmit={props.handleSubmit} className="w-50">
 
                     <Card.Title as="h1" className="text-center mb-4">
