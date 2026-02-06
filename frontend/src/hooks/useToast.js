@@ -1,19 +1,20 @@
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const useToast = () => {
-  const { t, i18n } = useTranslation('toast')
+  const { i18n } = useTranslation()
 
-  const showToast = ({ code, type = 'success' }) => {
-    try {
-      const message = i18n.t(code)
-      if (type === 'error') {
-        toast.error(message)
-      } else {
-        toast.success(message)
-      }
-    } catch (err) {
-      console.warn('Toast translation failed:', code, err)
+  const showToast = ({ type = 'default', code }) => {
+    const message = i18n.t(code, { ns: 'toast' })
+
+    if (type === 'success') {
+      toast.success(message)
+    }
+    else if (type === 'error') {
+      toast.error(message)
+    }
+    else {
+      toast(message)
     }
   }
 
