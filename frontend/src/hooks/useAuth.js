@@ -1,31 +1,58 @@
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { authActions } from '../slices/auth'
-import { pages as pagesRoutes } from '../utils/routes'
-import { useLoginMutation } from '../api/chatApi'
 
-const useAuth = () => {
+import { authActions, getStoredUser } from '../slices/auth'
+import { useLoginMutation } from '../api/chatApi'
+import { pages } from '../utils/routes'
+
+export const useAuth = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [loginRequest] = useLoginMutation()
+  const [loginMutation] = useLoginMutation()
 
-  const logIn = async (values) => {
-    const result = await loginRequest(values).unwrap()
+  // ---------- LOGIN ----------
+  const login = async (values, formikHelpers) => {
+    try {
+      const user = await loginMutation(values).unwrap()
 
-    localStorage.setItem('user', JSON.stringify(result))
-    dispatch(authActions.setAuth(result))
-    navigate(pagesRoutes.root())
+      localStorage.setItem('user', JSON.stringify(user))
+      dispatch(authActions.setAuth(user))
+
+      navigate(pages.root())
+    }
+    catch (err) {
+      if (err.status === 401) {
+        formikHelpers?.setStatus(401)
+        formikHelpers?.setErrors({ password: 'wrongUser' })
+        return
+      }
+      throw err
+    }
   }
 
-  const logOut = () => {
+  // ---------- LOGOUT ----------
+  const logout = () => {
     localStorage.removeItem('user')
     dispatch(authActions.removeAuth())
-    navigate(pagesRoutes.login())
+    navigate(pages.login())
   }
 
-  const isAuth = () => Boolean(localStorage.getItem('user'))
+  // ---------- INIT AUTH ----------
+  const initAuth = () => {
+    const user = getStoredUser()
+    if (user) {
+      dispatch(authActions.setAuth(user))
+    }
+  }
 
-  return { logIn, logOut, isAuth }
+  useEffect(() => {
+    initAuth()
+  }, [])
+
+  return {
+    login,
+    logout,
+    initAuth,
+  }
 }
-
-export default useAuth
