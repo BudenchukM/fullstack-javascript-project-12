@@ -1,25 +1,31 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { authActions, selectAuth } from '../slices/auth'
+import { authActions } from '../slices/auth'
 import { pages as pagesRoutes } from '../utils/routes'
+import { useLoginMutation } from '../api/chatApi'
 
 const useAuth = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const auth = useSelector(selectAuth)
+  const [loginRequest] = useLoginMutation()
 
-  const handleLogout = () => {
+  const logIn = async (values) => {
+    const result = await loginRequest(values).unwrap()
+
+    localStorage.setItem('user', JSON.stringify(result))
+    dispatch(authActions.setAuth(result))
+    navigate(pagesRoutes.root())
+  }
+
+  const logOut = () => {
     localStorage.removeItem('user')
     dispatch(authActions.removeAuth())
     navigate(pagesRoutes.login())
   }
 
-  const isAuth = Boolean(auth.token)
+  const isAuth = () => Boolean(localStorage.getItem('user'))
 
-  return {
-    isAuth,
-    handleLogout,
-  }
+  return { logIn, logOut, isAuth }
 }
 
 export default useAuth
