@@ -22,12 +22,15 @@ export const useAuth = () => {
       navigate(pages.root())
     }
     catch (err) {
-      if (err.status === 401) {
-        formikHelpers?.setStatus(401)
-        formikHelpers?.setErrors({ password: 'wrongUser' })
+      // ❗ ВАЖНО: показываем Formik-ошибку
+      if (err?.status === 401) {
+        formikHelpers.setStatus(401)
+        formikHelpers.setSubmitting(false)
         return
       }
-      throw err
+
+      // любые другие ошибки просто логируем
+      console.error(err)
     }
   }
 

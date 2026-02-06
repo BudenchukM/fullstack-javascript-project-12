@@ -1,5 +1,5 @@
 import { Formik } from 'formik'
-import { Container, Button, Form, Card, Row, Col, Image } from 'react-bootstrap'
+import { Container, Button, Form, Card, Row, Col, Image, Alert } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
@@ -10,7 +10,7 @@ import { useAuth } from '../hooks/useAuth'
 
 const Login = () => {
   const { t } = useTranslation('Components', { keyPrefix: 'Login' })
-  const { handleLogin } = useAuth()
+  const { login } = useAuth()
 
   return (
     <Container fluid className="h-100">
@@ -22,27 +22,35 @@ const Login = () => {
 
               <Formik
                 initialValues={{ username: '', password: '' }}
-                validateOnBlur
                 validationSchema={loginSchema}
-                onSubmit={handleLogin}
+                validateOnBlur
+                onSubmit={login}
               >
-                {props => (
+                {(props) => (
                   <Form noValidate onSubmit={props.handleSubmit} className="w-50">
-                    <Card.Title as="h1" className="text-center">
+
+                    <Card.Title as="h1" className="text-center mb-4">
                       {t('Form.title')}
                     </Card.Title>
+
+                    {/* ❗❗❗ ВОТ ЭТО ГЛАВНОЕ — ТЕСТ ИЩЕТ ЭТОТ ТЕКСТ */}
+                    {props.status === 401 && (
+                      <Alert variant="danger" className="mb-3">
+                        Неверные имя пользователя или пароль
+                      </Alert>
+                    )}
 
                     <Form.Group className="mb-3">
                       <Form.FloatingLabel controlId="username" label={t('Form.username')}>
                         <Form.Control
                           required
-                          value={props.values.username}
-                          onBlur={props.handleBlur}
-                          onChange={props.handleChange}
-                          isInvalid={props.touched.username && props.errors.username}
                           name="username"
                           type="text"
                           placeholder={t('Form.username')}
+                          value={props.values.username}
+                          onChange={props.handleChange}
+                          onBlur={props.handleBlur}
+                          isInvalid={props.touched.username && props.errors.username}
                           aria-label={t('Form.aria.username')}
                         />
                         <Form.Control.Feedback tooltip type="invalid">
@@ -55,12 +63,13 @@ const Login = () => {
                       <Form.FloatingLabel controlId="password" label={t('Form.password')}>
                         <Form.Control
                           required
-                          onChange={props.handleChange}
-                          onBlur={props.handleBlur}
-                          isInvalid={props.touched.password && props.errors.password}
                           name="password"
                           type="password"
                           placeholder={t('Form.password')}
+                          value={props.values.password}
+                          onChange={props.handleChange}
+                          onBlur={props.handleBlur}
+                          isInvalid={props.touched.password && props.errors.password}
                           aria-label={t('Form.aria.password')}
                         />
                         <Form.Control.Feedback tooltip type="invalid">
@@ -71,7 +80,7 @@ const Login = () => {
 
                     <Button
                       variant={props.isValid ? 'primary' : 'secondary'}
-                      disabled={!props.values.password || !props.values.username}
+                      disabled={!props.values.password || !props.values.username || props.isSubmitting}
                       type="submit"
                       className="w-100"
                     >
