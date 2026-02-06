@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { pages as pagesRoutes } from '../utils/routes.js'
-import useAuth from '../hooks/useAuth.js'
+import { useAuth } from '../hooks/useAuth.js'
 
 const MainHeader = () => {
   const { t } = useTranslation('Components', { keyPrefix: 'MainHeader' })
