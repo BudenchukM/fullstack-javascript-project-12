@@ -2,6 +2,10 @@ import ReactDOM from 'react-dom/client'
 import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react'
 import { I18nextProvider } from 'react-i18next'
 
+import ReactDOM from 'react-dom/client'
+import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react'
+import { I18nextProvider } from 'react-i18next'
+
 import App from './App.jsx'
 import i18n, { initPromise } from './init.js'
 
@@ -27,5 +31,5 @@ root.render(
   </RollbarProvider>,
 )
 
-// Инициализация после render
+// инициализация ПОСЛЕ render
 initPromise

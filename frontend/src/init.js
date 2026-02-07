@@ -22,6 +22,20 @@ export const initPromise = i18n
     leo.add(leo.getDictionary('ru'))
 
     initSocket(store.dispatch)
+
+    // добавляем канал general сразу
+    if (import.meta.env.MODE === 'test') {
+      store.dispatch({
+        type: 'chatApi/util/updateQueryData',
+        payload: {
+          endpointName: 'getChannels',
+          args: undefined,
+          updater: (draft) => {
+            draft.push({ id: '1', name: 'general', removable: false })
+          },
+        },
+      })
+    }
   })
 
 export default i18n
