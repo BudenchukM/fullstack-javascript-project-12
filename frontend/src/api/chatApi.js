@@ -5,7 +5,7 @@ const getUserToken = () => {
   try {
     const userData = localStorage.getItem('user')
     return userData ? JSON.parse(userData).token : null
-  } 
+  }
   catch {
     return null
   }
