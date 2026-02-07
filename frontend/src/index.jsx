@@ -27,5 +27,5 @@ root.render(
   </RollbarProvider>,
 )
 
-// инициализация ПОСЛЕ render
+// Инициализация после render
 initPromise

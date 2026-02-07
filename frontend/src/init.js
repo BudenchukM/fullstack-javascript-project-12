@@ -14,9 +14,7 @@ export const initPromise = i18n
     resources,
     debug: import.meta.env.MODE === 'development',
     fallbackLng: 'ru',
-    interpolation: {
-      escapeValue: false,
-    },
+    interpolation: { escapeValue: false },
   })
   .then(() => {
     leo.clearList()

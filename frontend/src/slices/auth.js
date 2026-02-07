@@ -19,10 +19,7 @@ const authSlice = createSlice({
     },
     removeAuth: () => {
       localStorage.removeItem('user')
-      return {
-        username: null,
-        token: null,
-      }
+      return { username: null, token: null }
     },
     initAuth: (state) => {
       const user = getUserFromStorage()
@@ -32,14 +29,11 @@ const authSlice = createSlice({
       return state
     },
   },
-  extraReducers: builder => builder
-    .addMatcher(chatApi.endpoints.getChannels.matchRejected, (state, payload) => {
+  extraReducers: builder =>
+    builder.addMatcher(chatApi.endpoints.getChannels.matchRejected, (state, payload) => {
       if (payload.error.status === 401) {
         localStorage.removeItem('user')
-        return {
-          username: null,
-          token: null,
-        }
+        return { username: null, token: null }
       }
     }),
 })
