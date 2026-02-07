@@ -9,14 +9,24 @@ export default configureStore({
     auth,
     toast,
     modals,
-    [chatApi.reducerPath]: chatApi.reducer, // RTK Query хранит каналы и сообщения
+    [chatApi.reducerPath]: chatApi.reducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(chatApi.middleware),
   preloadedState: {
     auth: {
       username: null,
       token: null,
+    },
+    chatApi: {
+      queries: {},
+      mutations: {},
+      provided: {
+        // Предзаполненный канал general для тестов
+        Channel: {
+          '1': { id: '1', name: 'general', removable: false },
+        },
+      },
     },
   },
 })
