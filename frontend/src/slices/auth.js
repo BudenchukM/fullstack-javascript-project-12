@@ -1,33 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { chatApi } from '../api/chatApi.js'
 
-const getUserFromStorage = () => {
-  const userData = localStorage.getItem('user')
-  return userData ? JSON.parse(userData) : null
+const AUTH_KEY = 'user'
+
+const getInitialState = () => {
+  try {
+    const data = localStorage.getItem(AUTH_KEY)
+    return data ? JSON.parse(data) : { username: null, token: null }
+  }
+  catch {
+    return { username: null, token: null }
+  }
 }
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { username: null, token: null },
+  initialState: getInitialState(),
   reducers: {
     setAuth: (state, { payload }) => {
-      localStorage.setItem('user', JSON.stringify(payload))
-      return Object.assign(state, payload)
+      localStorage.setItem(AUTH_KEY, JSON.stringify(payload))
+      return payload
     },
     removeAuth: () => {
-      localStorage.removeItem('user')
+      localStorage.removeItem(AUTH_KEY)
       return { username: null, token: null }
-    },
-    initAuth: (state) => {
-      const user = getUserFromStorage()
-      if (user) return Object.assign(state, user)
-      return state
     },
   },
   extraReducers: builder => builder
     .addMatcher(chatApi.endpoints.getChannels.matchRejected, (state, payload) => {
-      if (payload.error.status === 401) {
-        localStorage.removeItem('user')
+      if (payload?.error?.status === 401) {
+        localStorage.removeItem(AUTH_KEY)
         return { username: null, token: null }
       }
     }),
@@ -35,5 +37,4 @@ const authSlice = createSlice({
 
 export const selectAuth = state => state.auth
 export const authActions = authSlice.actions
-export const getStoredUser = () => getUserFromStorage()
 export default authSlice.reducer
